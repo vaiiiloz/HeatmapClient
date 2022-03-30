@@ -16,6 +16,7 @@ import utils.Renderer;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -39,15 +40,15 @@ public class main {
 //            //create request
             ServerRequest.Builder requestBuilder = ServerRequest.newBuilder();
             requestBuilder.setDeviceId(appfileConfig.deviceId);
-            requestBuilder.setWidth(appfileConfig.width);
-            requestBuilder.setHeight(appfileConfig.height);
             requestBuilder.setUserid(1);
 
             //create start, end date
-            String start = "2022-03-09 03:00:00";
-            String end = "2022-03-09 07:00:00";
-            Time startTime = Time.newBuilder().setTime(start).setFormat("yyyy-M-dd hh:mm:ss").build();
-            Time endTime = Time.newBuilder().setTime(end).setFormat("yyyy-M-dd hh:mm:ss").build();
+            String start = "2022-03-22 7:00:00";
+            String end = "2022-03-22 11:00:00";
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-M-dd hh:mm:ss");
+
+            long startTime = sdf.parse(start).getTime();
+            long endTime = sdf.parse(end).getTime();
 
             requestBuilder.setTimeRequest(TimeRequest.newBuilder().setStart(startTime).setEnd(endTime).build());
 
@@ -72,15 +73,13 @@ public class main {
 ////            convert byteString to heatmap
             byte[] bytes = serverResponse.getHeatmap().toByteArray();
             System.out.println(bytes.length);
+//            System.out.println("Counting: " + serverResponse.getCounting());
             InputStream is = new ByteArrayInputStream(bytes);
             BufferedImage heatmap = ImageIO.read(is);
             //get Background
-            BufferedImage background = Backgroundgrapper.getBackground();
 
-            //insert background
-            BufferedImage img = Renderer.insertHeatmap(background, heatmap);
-
-            ImageIO.write(img,"jpg",new File("deviceA.jpg"));
+            ImageIO.write(heatmap,"png",new File("output.png"));
+            System.out.println("HEY");
 
 
 
